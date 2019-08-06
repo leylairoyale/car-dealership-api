@@ -61,6 +61,14 @@ def update_salesperson(id):
     return salesperson_schema.jsonify(salesperson)
 
 #route deleting a salesperson
+#does not work if a salesperson is connected to another table.
+@app.route('/salesperson/<id>', methods=["DELETE"])
+def delete_salesperson(id):
+    salesperson = Salesperson.query.get(id)
+    db.session.delete(salesperson)
+    db.session.commit()
+    return salesperson_schema.jsonify(salesperson)
+
 
 #route creating a car
 @app.route('/car', methods=["GET", "POST"])
@@ -89,6 +97,28 @@ def get_cars():
     result = cars_schema.dump(all_cars)
     return jsonify(result.data)
 
+#route updating a car
+@app.route('/car/<id>', methods=["PUT"])
+def update_car(id):
+    car = Car.query.get(id)
+
+    new_used = request.json["new_used"]
+    color = request.json["color"]
+
+    car.new_used = new_used
+    car.color = color
+
+    db.session.commit()
+    return car_schema.jsonify(car)
+
+#route deleting a car
+@app.route('/car/<id>', methods=["DELETE"])
+def delete_car(id):
+    car = Car.query.get(id)
+    db.session.delete(car)
+    db.session.commit()
+    return car_schema.jsonify(car)
+
 #route creating an invoice
 @app.route('/invoice', methods=["GET", "POST"])
 def add_invoice():
@@ -101,6 +131,30 @@ def add_invoice():
     db.session.add(new_invoice)
     db.session.commit()
     return invoice_schema.jsonify(new_invoice)
+
+#route updating an invoice
+@app.route('/invoice/<id>', methods=["PUT"])
+def update_invoice(id):
+    invoice = Invoice.query.get(id)
+
+    amount = request.json["amount"]
+    salesperson_id = request.json["salesperson_id"]
+    car_id = request.json["car_id"]
+
+    invoice.amount = amount
+    invoice.salesperson_id= salesperson_id
+    invoice.car_id = car_id
+
+    db.session.commit()
+    return invoice_schema.jsonify(invoice)
+
+#route deleting an invoice
+@app.route('/invoice/<id>', methods=["DELETE"])
+def delete_invoice(id):
+    invoice = Invoice.query.get(id)
+    db.session.delete(invoice)
+    db.session.commit()
+    return invoice_schema.jsonify(invoice)
 
 #route getting an invoice by id
 @app.route('/invoice/<id>', methods=["GET"])
@@ -142,6 +196,32 @@ def get_customers():
     result = customers_schema.dump(all_customers)
     return jsonify(result.data)
 
+#route updating a customer
+@app.route('/customer/<id>', methods=["PUT"])
+def update_customer(id):
+    customer = Customer.query.get(id)
+
+    first_name = request.json["first_name"]
+    last_name = request.json["last_name"]
+    invoice_id = request.json["invoice_id"]
+    service_id = request.json["service_id"]
+
+    customer.first_name = first_name
+    customer.last_name = last_name
+    customer.invoice_id = invoice_id
+    customer.service_id = service_id
+
+    db.session.commit()
+    return customer_schema.jsonify(customer)
+
+#route deleting a customer
+@app.route('/customer/<id>', methods=["DELETE"])
+def delete_customer(id):
+    customer = Customer.query.get(id)
+    db.session.delete(customer)
+    db.session.commit()
+    return customer_schema.jsonify(customer)
+
 #route getting a service history? not sure if this is right.
 #@app.route('/service_history', methods=["GET"])
 #def get_service_history():
@@ -172,6 +252,28 @@ def get_mechanics():
     result = mechanics_schema.dump(all_mechanics)
     return jsonify(result.data)
 
+#route updating a mechanic
+@app.route('/mechanic/<id>', methods=["PUT"])
+def update_mechanic(id):
+    mechanic = Mechanics.query.get(id)
+
+    first_name = request.json["first_name"]
+    last_name = request.json["last_name"]
+
+    mechanic.first_name = first_name
+    mechanic.last_name = last_name
+
+    db.session.commit()
+    return mechanic_schema.jsonify(mechanic)
+
+#route deleting a mechanic
+@app.route('/mechanic/<id>', methods=["DELETE"])
+def delete_mechanic(id):
+    mechanic = Mechanics.query.get(id)
+    db.session.delete(mechanic)
+    db.session.commit()
+    return mechanic_schema.jsonify(mechanic)
+
 #route creating a service
 @app.route('/service', methods=["GET", "POST"])
 def create_service():
@@ -199,6 +301,32 @@ def get_services():
     result = services_schema.dump(all_services)
     return jsonify(result.data)
 
+#route updating a service
+@app.route('/service/<id>', methods=["PUT"])
+def update_service(id):
+    service = Service.query.get(id)
+
+    service_name = request.json["service_name"]
+    service_type = request.json["service_type"]
+    mechanics_id = request.json["mechanics_id"]
+    car_id = request.json["car_id"]
+
+    service.service_name = service_name
+    service.service_type = service_type
+    service.mechanics_id = mechanics_id
+    service.car_id = car_id
+
+    db.session.commit()
+    return service_schema.jsonify(service)
+
+#route deleting a service
+@app.route('/service/<id>', methods=["DELETE"])
+def delete_service(id):
+    service = Service.query.get(id)
+    db.session.delete(service)
+    db.session.commit()
+    return service_schema.jsonify(service)
+
 #route creating a part
 @app.route('/part', methods = ["GET", "POST"])
 def create_part():
@@ -223,3 +351,24 @@ def get_parts():
     all_parts = Parts.query.all()
     result = parts_schema.dump(all_parts)
     return jsonify(result.data)
+
+#route updating a part
+@app.route('/part/<id>', methods=["PUT"])
+def update_part(id):
+    part = Parts.query.get(id)
+
+    part_name = request.json["part_name"]
+    service_id = request.json["service_id"]
+
+    parts.part_name = part_name
+    parts.service_id = service_id
+
+    db.session.commit()
+    return part_schema.jsonify(part)
+
+@app.route('/part/<id>', methods=["DELETE"])
+def delete_part(id):
+    part = Parts.query.get(id)
+    db.session.delete(part)
+    db.session.commit()
+    return part_schema.jsonify(part)
